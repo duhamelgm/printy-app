@@ -12,8 +12,8 @@ def create_app() -> Flask:
     db_url = os.getenv("DATABASE_URL")
     redis_url = os.getenv("REDIS_URL")
 
-    db = PostgresqlDatabase(None)
-    db.init(db_url)
+    # Use peewee URL helper so DSNs like postgresql://user:pass@host:port/db work
+    db = PostgresqlDatabase.from_url(db_url)
     redis_client = Redis.from_url(redis_url)
 
     def check_postgres() -> bool:
