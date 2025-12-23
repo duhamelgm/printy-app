@@ -16,6 +16,7 @@ services:
 
   nginx:
     image: nginx:1.29-alpine
+    build: ./frontend
     depends_on:
       - backend
     expose:
