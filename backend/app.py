@@ -21,18 +21,13 @@ def create_app() -> Flask:
             db.connect(reuse_if_open=True)
             db.execute_sql("SELECT 1;")
             return True
-        except Exception:
-            return False
         finally:
             if not db.is_closed():
                 db.close()
 
     def check_redis() -> bool:
-        try:
-            redis_client.ping()
-            return True
-        except Exception:
-            return False
+        redis_client.ping()
+        return True
 
     def health_response() -> Dict[str, Dict[str, bool] | str]:
         postgres_ok = check_postgres()
