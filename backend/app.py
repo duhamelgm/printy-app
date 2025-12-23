@@ -2,7 +2,8 @@ import os
 from typing import Dict
 
 from flask import Flask, jsonify
-from peewee import PostgresqlDatabase
+from peewee import *
+from playhouse.db_url import connect
 from redis import Redis
 
 
@@ -13,7 +14,7 @@ def create_app() -> Flask:
     redis_url = os.getenv("REDIS_URL")
 
     # Use peewee URL helper so DSNs like postgresql://user:pass@host:port/db work
-    db = PostgresqlDatabase.from_url(db_url)
+    db = connect(db_url)
     redis_client = Redis.from_url(redis_url)
 
     def check_postgres() -> bool:
