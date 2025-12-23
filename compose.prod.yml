@@ -14,17 +14,13 @@ services:
       - DATABASE_URL=${DATABASE_URL:?}
       - REDIS_URL=${REDIS_URL:?}
 
-  nginx:
-    image: nginx:1.29-alpine
+  frontend:
     build: ./frontend
     depends_on:
       - backend
     expose:
       - "80"
       - "443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./frontend:/usr/share/nginx/html:ro
 
 volumes:
   postgres_data:
