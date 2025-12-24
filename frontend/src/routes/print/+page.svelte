@@ -52,7 +52,7 @@ onMount(() => {
 						<p class="text-[#90c1cb] text-sm font-normal leading-relaxed mb-4">
 							Fill out the ticket details manually using our standard input form.
 						</p>
-						<Button href="/print/form" size="lg" endIcon="arrow_forward">Create Manually</Button>
+						<Button href="/print/ticket" size="lg" endIcon="arrow_forward">Create Manually</Button>
 					</div>
 				</div>
 			</div>

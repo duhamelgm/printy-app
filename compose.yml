@@ -9,7 +9,7 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - FLASK_ENV=development
+      - PYTHON_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
       - REDIS_URL=redis://redis:6379/0
     depends_on:
@@ -36,14 +36,19 @@ services:
       - "6378:6379"
 
   frontend:
+    command: npm run dev -- --host 0.0.0.0 --port 5173
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    environment:
+      - PUBLIC_API_URL=http://localhost:5001
     depends_on:
       - backend
     ports:
-      - "80:80"
-      - "443:443"
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   postgres_data:

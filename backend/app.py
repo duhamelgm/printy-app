@@ -9,10 +9,12 @@ from ticket_image import TicketImage
 from printing_queue import enqueue_print
 from pydantic import BaseModel
 from flask_pydantic import validate
+from flask_cors import CORS
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    CORS(app)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     db.init_app(app)
     alembic = Alembic()
@@ -24,7 +26,7 @@ def create_app() -> Flask:
         assignee: str
         priority: str
 
-    @app.post("/api/print/ticket")
+    @app.post("/v1/print/ticket")
     @validate()
     def create_ticket_print(body: TicketPrintRequestBody):        
         # Create the ticket image
