@@ -2,8 +2,10 @@ flask==3.1.2
 gunicorn==23.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Alembic==3.2.0
+Flask-Pydantic==0.14.0
 psycopg2-binary==2.9.11
 redis==7.1.0
 html2image==2.0.7
 pillow==12.0.0
 numpy==2.4.0
+python-liquid==2.1.0

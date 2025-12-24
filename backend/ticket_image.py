@@ -1,15 +1,18 @@
 import os
 import uuid
+from datetime import datetime
 from PIL import Image, ImageOps
 import numpy as np
 from html2image import Html2Image
+from liquid import render
+import random
 
 class TicketImage:
-    def __init__(self, template_name: str):
+    def __init__(self, template_name: str, attributes: dict):
         self.template_name = template_name
         self.image_name = f"{str(uuid.uuid4())}.png"
         self.tmp_image_path = f"/app/tmp/{self.image_name}"
-
+        self.attributes = attributes
         self.save_image_from_html()
         self._im = self.crop_and_prepare_image()
 
@@ -25,7 +28,11 @@ class TicketImage:
           ],
           output_path="/app/tmp"
         )
-        hti.screenshot(html_str=open(f"/app/templates/{self.template_name}.html", "r").read(), save_as=self.image_name)
+
+        html_str = open(f"/app/templates/{self.template_name}.html", "r").read()
+        html_str = render(html_str, **{ **self.attributes, "timestamp": datetime.now().isoformat(), "ticket_id": f"HOME-{random.randint(100, 999)}" })
+
+        hti.screenshot(html_str=html_str, save_as=self.image_name)
 
     def crop_and_prepare_image(self) -> Image:
         # open the PNG again, and crop it to the content.

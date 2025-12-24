@@ -7,6 +7,9 @@ from database import db
 from models import *
 from ticket_image import TicketImage
 from printing_queue import enqueue_print
+from pydantic import BaseModel
+from flask_pydantic import validate
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -15,10 +18,17 @@ def create_app() -> Flask:
     alembic = Alembic()
     alembic.init_app(app)
 
+    class TicketPrintRequestBody(BaseModel):
+        title: str
+        description: str
+        assignee: str
+        priority: str
+
     @app.post("/api/print/ticket")
-    def create_ticket_print():
+    @validate()
+    def create_ticket_print(body: TicketPrintRequestBody):        
         # Create the ticket image
-        ticket_image = TicketImage(template_name="ticket")
+        ticket_image = TicketImage(template_name="ticket", attributes=body.model_dump())
         raster_data = ticket_image.to_raster_format()
 
         # Save the print to the database

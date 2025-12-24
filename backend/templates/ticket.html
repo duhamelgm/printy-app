@@ -79,23 +79,23 @@
 <div class="p-6 pb-4 border-b-2 border-black border-dashed flex justify-between items-start">
 <div>
 <p class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-1">Ticket ID</p>
-<p class="text-2xl font-bold font-mono tracking-tight">BUG-402</p>
+<p class="text-2xl font-bold font-mono tracking-tight">{{ ticket_id }}</p>
 </div>
 <div class="bg-black text-white px-3 py-1 rounded-sm">
-<p class="text-xs font-bold uppercase tracking-widest">High Priority</p>
+<p class="text-xs font-bold uppercase tracking-widest">{{ priority }}</p>
 </div>
 </div>
 <!-- Ticket Body -->
 <div class="p-6 flex-1 flex flex-col gap-6">
 <!-- Title -->
 <div>
-<h1 class="text-3xl font-extrabold leading-none tracking-tight uppercase mb-2">Login Failure</h1>
-<p class="text-xs font-mono text-gray-500">TIMESTAMP: 2023-10-27 14:45:00 UTC</p>
+<h1 class="text-3xl font-extrabold leading-none tracking-tight uppercase mb-2">{{ title }}</h1>
+<p class="text-xs font-mono text-gray-500">TIMESTAMP: {{ timestamp }}</p>
 </div>
 <!-- Description Box -->
 <div class="flex-1 border-l-4 border-black pl-4 py-1">
 <p class="text-sm font-medium leading-relaxed font-body text-gray-800">
-                                User cannot access the mainframe when 2FA is enabled. Critical error detected on node 4 during authentication handshake sequence.
+                                {{ description }}
                             </p>
 </div>
 <!-- Assignee Section -->
@@ -105,7 +105,7 @@
 </div>
 <div>
 <p class="text-[10px] uppercase font-bold text-gray-500">Assigned Unit</p>
-<p class="text-base font-bold text-black">Dev Unit 01</p>
+<p class="text-base font-bold text-black">{{ assignee }}</p>
 </div>
 </div>
 </div>
