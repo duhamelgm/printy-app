@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Print Ticket Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#fff",
+                        "background-dark": "#101622",
+                        "neon-pink": "#d946ef",
+                        "neon-purple": "#a855f7",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom grid background for synthwave vibe */
+        .synthwave-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+        
+        /* Barcode pattern simulation */
+        .barcode {
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 2px,
+                transparent 2px,
+                transparent 4px,
+                #000 4px,
+                #000 8px,
+                transparent 8px,
+                transparent 9px
+            );
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+      width: 576px;
+      height: 300px;
+      background: #000;
+    }
+  </style>
+  </head>
+<body>
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden">
+<!-- Main Content Area: The Ticket -->
+<div class="relative z-10 flex-1 flex flex-col items-center justify-stretch @container">
+<!-- Ticket Container Wrapper with Glow -->
+<div class="relative w-full group perspective-1000">
+<!-- Glowing Border Effect -->
+<!-- The Ticket Itself (White Paper) -->
+<div class="relative flex flex-col bg-white text-black overflow-hidden min-h-[480px]">
+<!-- Decorative Top Hole Punch Simulation -->
+<div class="absolute top-[-12px] left-1/2 -translate-x-1/2 w-6 h-6 bg-background-dark rounded-full border-b border-white/20"></div>
+<!-- Ticket Header -->
+<div class="p-6 pb-4 border-b-2 border-black border-dashed flex justify-between items-start">
+<div>
+<p class="text-xs font-bold tracking-widest text-gray-500 uppercase mb-1">Ticket ID</p>
+<p class="text-2xl font-bold font-mono tracking-tight">BUG-402</p>
+</div>
+<div class="bg-black text-white px-3 py-1 rounded-sm">
+<p class="text-xs font-bold uppercase tracking-widest">High Priority</p>
+</div>
+</div>
+<!-- Ticket Body -->
+<div class="p-6 flex-1 flex flex-col gap-6">
+<!-- Title -->
+<div>
+<h1 class="text-3xl font-extrabold leading-none tracking-tight uppercase mb-2">Login Failure</h1>
+<p class="text-xs font-mono text-gray-500">TIMESTAMP: 2023-10-27 14:45:00 UTC</p>
+</div>
+<!-- Description Box -->
+<div class="flex-1 border-l-4 border-black pl-4 py-1">
+<p class="text-sm font-medium leading-relaxed font-body text-gray-800">
+                                User cannot access the mainframe when 2FA is enabled. Critical error detected on node 4 during authentication handshake sequence.
+                            </p>
+</div>
+<!-- Assignee Section -->
+<div class="bg-white p-3 rounded border border-gray-200 flex items-center gap-3">
+<div class="size-10 bg-black text-white flex items-center justify-center rounded-full shrink-0">
+<span class="material-symbols-outlined text-[20px]">engineering</span>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-gray-500">Assigned Unit</p>
+<p class="text-base font-bold text-black">Dev Unit 01</p>
+</div>
+</div>
+</div>
+<!-- Ticket Footer -->
+<div class="bg-white p-6 pt-4 border-t-2 border-black border-dashed">
+<div class="flex items-end justify-between">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] font-mono uppercase text-gray-400">Scan to track</span>
+<!-- Abstract QR Code representation -->
+<div class="w-16 h-16 bg-black p-1">
+<div class="w-full h-full bg-white grid grid-cols-4 grid-rows-4 gap-0.5">
+<div class="bg-black col-span-2 row-span-2"></div>
+<div class="bg-black col-start-4"></div>
+<div class="bg-black row-start-2 col-start-3"></div>
+<div class="bg-black row-start-3 col-start-1"></div>
+<div class="bg-black row-start-3 col-start-4"></div>
+<div class="bg-black row-start-4 col-start-2 col-span-2"></div>
+</div>
+</div>
+</div>
+<!-- Barcode -->
+<div class="flex flex-col items-end gap-1">
+<div class="h-8 w-32 barcode opacity-80"></div>
+<span class="text-[10px] font-mono tracking-[0.2em]">884-902-11</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</body></html>

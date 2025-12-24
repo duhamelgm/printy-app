@@ -1,59 +1,42 @@
 import os
-from typing import Dict
 
 from flask import Flask, jsonify
-from peewee import *
-from playhouse.db_url import connect
+from flask_alembic import Alembic
 from redis import Redis
-
+from database import db
+from models import *
+from ticket_image import TicketImage
+from printing_queue import enqueue_print
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    db.init_app(app)
+    alembic = Alembic()
+    alembic.init_app(app)
 
-    db_url = os.getenv("DATABASE_URL")
-    redis_url = os.getenv("REDIS_URL")
+    @app.post("/print/ticket")
+    def create_ticket_print():
+        # Create the ticket image
+        ticket_image = TicketImage(template_name="ticket")
+        raster_data = ticket_image.to_raster_format()
 
-    # Use peewee URL helper so DSNs like postgresql://user:pass@host:port/db work
-    db = connect(db_url)
-    redis_client = Redis.from_url(redis_url)
+        # Save the print to the database
+        print = Print(raster_data=raster_data, image_width=ticket_image.get_width(), image_height=ticket_image.get_height())
+        db.session.add(print)
+        db.session.commit()
 
-    def check_postgres() -> bool:
-        try:
-            db.connect(reuse_if_open=True)
-            db.execute_sql("SELECT 1;")
-            return True
-        finally:
-            if not db.is_closed():
-                db.close()
+        # Enqueue the print for printing
+        enqueue_print(print.id)
 
-    def check_redis() -> bool:
-        redis_client.ping()
-        return True
+        ticket_image.remove_tmp_image()
 
-    def health_response() -> Dict[str, Dict[str, bool] | str]:
-        postgres_ok = check_postgres()
-        redis_ok = check_redis()
-        overall_ok = postgres_ok and redis_ok
-        status_code = 200 if overall_ok else 503
-        payload = {
-            "status": "ok" if overall_ok else "unhealthy",
-            "services": {"postgres": postgres_ok, "redis": redis_ok},
-        }
-        return payload, status_code
-
-    @app.route("/health", methods=["GET"])
-    @app.route("/api/health", methods=["GET"])
-    def health():
-        payload, status_code = health_response()
-        return jsonify(payload), status_code
+        return jsonify({"status": "ok", "print_id": print.id})
 
     return app
 
 
 app = create_app()
 
-
 if __name__ == "__main__":
-    # For local debugging; in containers the command is set in Dockerfile
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
+    app.run(host="localhost", port=5000)

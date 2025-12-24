@@ -1,18 +1,15 @@
 FROM python:3.15-rc-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
-    APP_HOME=/app
-
-WORKDIR ${APP_HOME}
+WORKDIR /app
 
 # Build deps for psycopg2-binary (libpq headers) and compiling wheels
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     pkg-config \
+    chromium \
+    libjpeg-dev \
+    libpng-dev \
   && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
