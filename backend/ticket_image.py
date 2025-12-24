@@ -1,6 +1,6 @@
 import os
 import uuid
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 from html2image import Html2Image
 
@@ -57,6 +57,8 @@ class TicketImage:
         img = img.convert("L")  # convert to grayscale
         threshold = 254  # Lower value -> more pixels go to black
         img.point(lambda x: 255 if x > threshold else 0, mode="1")
+        img = ImageOps.invert(img)
+        img = img.convert("1")
 
         img.save(self.tmp_image_path)
 

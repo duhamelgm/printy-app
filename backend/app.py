@@ -15,7 +15,7 @@ def create_app() -> Flask:
     alembic = Alembic()
     alembic.init_app(app)
 
-    @app.post("/print/ticket")
+    @app.post("/api/print/ticket")
     def create_ticket_print():
         # Create the ticket image
         ticket_image = TicketImage(template_name="ticket")
