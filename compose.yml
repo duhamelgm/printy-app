@@ -36,7 +36,9 @@ services:
       - "6378:6379"
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     depends_on:
       - backend
     ports:
