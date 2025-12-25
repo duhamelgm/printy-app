@@ -76,13 +76,13 @@
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
 		{#if startIcon}
-			<span class="material-symbols-outlined text-white mr-3 text-[28px] animate-pulse">
+			<span class="material-symbols-outlined text-white text-[28px] animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}
 			</span>
 		{/if}
 		{@render children?.()}
 		{#if endIcon}
-		<span class="material-symbols-outlined text-white ml-3 animate-pulse">
+		<span class="material-symbols-outlined text-white animate-pulse {children ? 'ml-3' : ''}">
 			{endIcon}
 		</span>
 		{/if}
@@ -100,13 +100,13 @@
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
 		{#if startIcon}
-			<span class="material-symbols-outlined text-white mr-3 animate-pulse">
+			<span class="material-symbols-outlined text-white animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}
 			</span>
 		{/if}
 		{@render children?.()}
 		{#if endIcon}
-			<span class="material-symbols-outlined text-white ml-3 animate-pulse">
+			<span class="material-symbols-outlined text-white animate-pulse {children ? 'ml-3' : ''}">
 				{endIcon}
 			</span>
 		{/if}
