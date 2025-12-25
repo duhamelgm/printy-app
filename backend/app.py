@@ -40,12 +40,13 @@ def create_app() -> Flask:
         # Create the token image
         token_image = TicketImage(template_name="token", attributes={ "token": token.value })
         raster_data = token_image.to_raster_format()
-        token_image.remove_tmp_image()
 
         # Save the print to the database
         print = Print(raster_data=raster_data, image_width=token_image.get_width(), image_height=token_image.get_height())
         db.session.add(print)
         db.session.commit()
+
+        token_image.remove_tmp_image()
 
         # Enqueue the print for printing
         enqueue_print(print.id)
