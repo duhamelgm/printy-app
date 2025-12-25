@@ -7,7 +7,7 @@ from html2image import Html2Image
 from liquid import render
 import random
 
-class TicketImage:
+class ImageRaster:
     def __init__(self, template_name: str, attributes: dict):
         self.template_name = template_name
         self.image_name = f"{str(uuid.uuid4())}.png"
@@ -37,22 +37,8 @@ class TicketImage:
     def crop_and_prepare_image(self) -> Image:
         # open the PNG again, and crop it to the content.
         img = Image.open(self.tmp_image_path)
+        img_rgb = img.convert("RGB")
 
-        # Crop away all black in the image (assumes black is RGB (0,0,0) or RGBA (0,0,0,255))
-        # Create a mask for all pixels not black, then get the bounding box
-        if img.mode in ("RGBA", "LA"):
-            # Ignore alpha, just use RGB
-            bg = (0, 0, 0, 255) if img.mode == "RGBA" else (0, 0, 0, 255)
-        else:
-            bg = (0, 0, 0)
-        # Create mask: white where not black, black where black
-        def not_black(pixel):
-            return pixel[:3] != (0, 0, 0)
-        # If RGBA, convert to RGB and ignore alpha
-        if img.mode not in ("RGB", "RGBA"):
-            img_rgb = img.convert("RGB")
-        else:
-            img_rgb = img.convert("RGB")
         # Make a mask where all nonblack are white (1)
         arr = np.array(img_rgb)
         is_not_black = np.any(arr != [0,0,0], axis=-1)
