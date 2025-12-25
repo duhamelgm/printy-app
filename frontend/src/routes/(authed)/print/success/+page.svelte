@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+</script>
+
 <style>
 	.neon-text-glow {
 		text-shadow: 0 0 10px rgba(13, 204, 242, 0.5), 0 0 20px rgba(13, 204, 242, 0.3);
@@ -12,9 +16,13 @@
 	</div>
 
 	<div class="relative z-10 w-full px-6 pt-12 pb-4 flex justify-between items-center">
-		<a href="/" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-			<span class="material-symbols-outlined text-white/70">close</span>
-		</a>
+		<Button
+			href="/"
+			variant="ghost"
+			size="icon"
+			startIcon="close"
+			class="rounded-full bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white/70"
+		/>
 		<div class="text-sm font-bold tracking-widest uppercase text-primary/60">Printy App</div>
 		<div class="w-10"></div>
 	</div>
@@ -40,8 +48,13 @@
 	</div>
 
 	<div class="relative z-10 w-full px-6 pb-10 pt-4 flex flex-col gap-3 max-w-md mx-auto">
-		<a href="/" class="w-full cursor-pointer flex items-center justify-center rounded-xl h-14 bg-[#1a2f33]/50 border border-white/10 text-white text-lg font-bold tracking-wide hover:bg-[#1a2f33] transition-colors active:scale-[0.98]">
+		<Button
+			href="/"
+			variant="outline"
+			size="xl"
+			class="w-full rounded-xl bg-[#1a2f33]/50 border-white/10 hover:bg-[#1a2f33]"
+		>
 			Done
-        </a>
+		</Button>
 	</div>
 </div>
