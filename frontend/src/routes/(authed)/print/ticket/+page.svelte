@@ -1,6 +1,6 @@
 <script>
 	import Topbar from '$lib/components/shared/Topbar.svelte';
-	import { PUBLIC_API_URL } from '$env/static/public';
+	import authorizedPost from '$lib/authorizedPost';
 
 	let title = $state('');
 	let description = $state('');
@@ -19,15 +19,8 @@
 		console.log(payload);
 		
 		try {
-			const response = await fetch(`${PUBLIC_API_URL}/v1/print/ticket`, {
-				method: 'POST',
-				body: JSON.stringify(payload),
-				headers: {
-					'Content-Type': 'application/json',
-				}
-			});
-			const data = await response.json();
-			console.log(data);
+			const response = await authorizedPost("/v1/print/ticket", payload);
+			console.log(response);
 		} catch (error) {
 			console.error(error);
 		} finally {

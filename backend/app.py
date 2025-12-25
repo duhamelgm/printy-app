@@ -41,6 +41,11 @@ def create_app() -> Flask:
         print_id = PrintImage(template_name="token", attributes={ "token": token.value }).call()
         return jsonify({"status": "ok", "payload": { "token": token.value }})
 
+    @app.post("/v1/auth/verify")
+    @authorized()
+    def verify_auth_token():
+        return jsonify({"status": "ok"})
+
     class TicketPrintRequestBody(BaseModel):
         title: str
         description: str

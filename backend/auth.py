@@ -19,7 +19,7 @@ def authorized():
 
             # Check if the token is expired
             if token_object.expires_at < datetime.now():
-                return jsonify({"status": "error", "message": "Token expired"}), 401
+                return jsonify({"status": "error", "message": "Unauthorized"}), 401
 
             return f(*args, **kwargs)
         return __authorized
