@@ -6,10 +6,15 @@
   let password = $state('');
 	let durationDays = $state(0);
 
-	const onLogin = async () => {
+	const onLogin = async (e: Event) => {
+		e.preventDefault();
+		
 		const response = await fetch(`${PUBLIC_API_URL}/v1/auth/token`, {
 			method: 'POST',
-			body: JSON.stringify({ duration_days: durationDays, password: password })
+			body: JSON.stringify({ duration_days: durationDays, password: password }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 
     const data = await response.json();
@@ -98,7 +103,7 @@
 							name="password"
 							placeholder="Enter your auth token"
 							required={true}
-              bind:value={durationDays}
+              bind:value={password}
 							type="password"
 						/>
 					</div>

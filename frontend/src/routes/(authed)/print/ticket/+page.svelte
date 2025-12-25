@@ -8,7 +8,8 @@
 	let priority = $state('medium');
 	let loading = $state(false);
 
-	const onSubmit = async () => {
+	const onSubmit = async (e: Event) => {
+		e.preventDefault();
 		loading = true;
 		const payload = {
 			title,

@@ -5,7 +5,9 @@
 
 	let inputToken = $state('');
 
-	const onLogin = async () => {
+	const onLogin = async (e: Event) => {
+		e.preventDefault();
+
 		const response = await fetch(`${PUBLIC_API_URL}/v1/auth/verify`, {
 			method: 'POST',
 			headers: {
