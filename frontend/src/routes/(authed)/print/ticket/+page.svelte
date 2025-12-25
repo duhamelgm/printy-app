@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Topbar from '$lib/components/shared/Topbar.svelte';
 	import authorizedPost from '$lib/authorizedPost';
+	import { goto } from '$app/navigation';
 
 	let title = $state('');
 	let description = $state('');
@@ -27,6 +28,8 @@
 		} finally {
 			loading = false;
 		}
+
+		goto('/print/success');
 	};
 </script>
 
