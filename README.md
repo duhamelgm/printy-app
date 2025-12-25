@@ -13,7 +13,12 @@ Dockerized starter stack with a Flask backend, placeholder frontend folder, Post
 docker compose up --build
 ```
 
-2) Check health endpoint:
+2) After pulling updates, run migrations if needed:
+```bash
+sudo docker compose exec backend flask db upgrade
+```
+
+3) Check health endpoint:
 - http://localhost:5000/health
 
 ## Environment
