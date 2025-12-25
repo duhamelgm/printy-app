@@ -12,6 +12,7 @@ services:
       - PYTHON_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
       - REDIS_URL=redis://redis:6379/0
+      - ADMIN_PASSWORD=admin
     depends_on:
       - db
       - redis

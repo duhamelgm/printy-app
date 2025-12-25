@@ -10,7 +10,8 @@ from printing_queue import enqueue_print
 from pydantic import BaseModel
 from flask_pydantic import validate
 from flask_cors import CORS
-
+import random
+from datetime import datetime, timedelta
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -19,6 +20,37 @@ def create_app() -> Flask:
     db.init_app(app)
     alembic = Alembic()
     alembic.init_app(app)
+
+    class AuthTokenRequestBody(BaseModel):
+        duration_days: int
+        password: str
+
+    @app.post("/v1/auth/token")
+    @validate()
+    def create_auth_token(body: AuthTokenRequestBody):
+        # Check if the password is correct
+        if body.password != os.getenv("ADMIN_PASSWORD"):
+            return jsonify({"status": "error", "message": "Invalid password"}), 401
+
+        # Create a new token
+        token = Token(value=f"{random.randint(100, 999)}-{random.randint(100, 999)}", expires_at=datetime.now() + timedelta(days=body.duration_days))
+        db.session.add(token)
+        db.session.commit()
+
+        # Create the token image
+        token_image = TicketImage(template_name="token", attributes={ "token": token.value })
+        raster_data = token_image.to_raster_format()
+        token_image.remove_tmp_image()
+
+        # Save the print to the database
+        print = Print(raster_data=raster_data, image_width=token_image.get_width(), image_height=token_image.get_height())
+        db.session.add(print)
+        db.session.commit()
+
+        # Enqueue the print for printing
+        enqueue_print(print.id)
+
+        return jsonify({"status": "ok", "payload": { "token": token.value }})
 
     class TicketPrintRequestBody(BaseModel):
         title: str
@@ -43,7 +75,7 @@ def create_app() -> Flask:
 
         ticket_image.remove_tmp_image()
 
-        return jsonify({"status": "ok", "print_id": print.id})
+        return jsonify({"status": "ok", "payload": { "print_id": print.id }})
 
     return app
 
