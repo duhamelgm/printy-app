@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Topbar from '$lib/components/shared/Topbar.svelte';
 	import authorizedPost from '$lib/authorizedPost';
 

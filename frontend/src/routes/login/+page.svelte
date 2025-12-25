@@ -2,8 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
 	let inputToken = $state('');
+	let interacted = getContext<Writable<boolean>>('interacted');
 
 	const onLogin = async (e: Event) => {
 		e.preventDefault();
@@ -18,6 +21,7 @@
 		const data = await response.json();
 		if (data.status === 'ok') {
 			localStorage.setItem('authToken', inputToken);
+			interacted.set(true);
 			goto('/');
 		} else {
 			alert('Invalid token');

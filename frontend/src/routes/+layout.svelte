@@ -2,6 +2,11 @@
 import '../app.css';
 
 import favicon from '$lib/assets/favicon.svg';
+import { writable } from 'svelte/store';
+import { setContext } from 'svelte';
+
+const interacted = writable(false);
+setContext('interacted', interacted);
 
 let { children } = $props();
 </script>
