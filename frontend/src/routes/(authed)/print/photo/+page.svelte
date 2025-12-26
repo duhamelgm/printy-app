@@ -69,6 +69,23 @@
 				Upload a photo or snap a picture of the issue to initiate the ticket sequence.
 			</p>
 		</div>
+		<!-- Placeholder State -->
+		<input
+			type="file"
+			accept="image/*"
+			style="visibility: hidden; position: absolute; top: 0; left: 0; width: 0; height: 0;"
+			bind:this={inputRef}
+			onchange={handleFileChange}
+		/>
+		<input
+			type="file"
+			accept="image/*"
+			capture="environment"
+			style="visibility: hidden; position: absolute; top: 0; left: 0; width: 0; height: 0;"
+			bind:this={inputRefCamera}
+			onchange={handleFileChange}
+		/>
+
 		<!-- Photo Drop Zone / Preview -->
 		<div class="flex flex-col md:flex-row justify-center mt-4 mb-6 gap-4">
 			<Button size="lg" endIcon="photo_library" onclick={onUpload}>Upload from Gallery</Button>
@@ -79,24 +96,6 @@
 			class="w-full aspect-4/5 max-h-[400px] max-w-[400px] relative group rounded-2xl overflow-hidden border-2 border-dashed border-primary/40 bg-black/20 hover:border-primary hover:shadow-neon transition-all duration-300 flex flex-col items-center justify-center cursor-pointer mb-6"
 			onclick={onUploadCamera}
 		>
-			<!-- Placeholder State -->
-			<input
-				type="file"
-				accept="image/*"
-				style="display: none;"
-        capture={false}
-				bind:this={inputRef}
-				onchange={handleFileChange}
-			/>
-			<input
-				type="file"
-				accept="image/*"
-				capture="environment"
-				style="display: none;"
-				bind:this={inputRefCamera}
-				onchange={handleFileChange}
-			/>
-
 			<!-- Preview -->
 			{#if imagePreview}
 				<div class="w-full h-full">
