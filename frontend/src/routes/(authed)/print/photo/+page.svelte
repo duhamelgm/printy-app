@@ -84,17 +84,18 @@
 				type="file"
 				accept="image/*"
 				style="display: none;"
+        capture={false}
 				bind:this={inputRef}
 				onchange={handleFileChange}
 			/>
-      <input
-        type="file"
-        capture
-        accept="image/*"
-        style="display: none;"
-        bind:this={inputRefCamera}
-        onchange={handleFileChange}
-      />
+			<input
+				type="file"
+				accept="image/*"
+				capture="environment"
+				style="display: none;"
+				bind:this={inputRefCamera}
+				onchange={handleFileChange}
+			/>
 
 			<!-- Preview -->
 			{#if imagePreview}
