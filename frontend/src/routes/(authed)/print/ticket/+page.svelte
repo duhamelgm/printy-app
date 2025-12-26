@@ -87,6 +87,7 @@
 					endIcon="rocket_launch"
 					onclick={onSubmit}
 					disabled={loading}
+					loading={loading}
 					class="w-full"
 					type="submit"
 				>

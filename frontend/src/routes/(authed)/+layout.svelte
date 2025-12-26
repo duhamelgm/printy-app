@@ -72,7 +72,7 @@
 				Access the Grid
 			</h2>
 		</div>
-		<Button class="w-full" size="xl" onclick={onInitialize}>Initialize</Button>
+		<Button class="w-full max-w-[400px] mx-auto" size="xl" onclick={onInitialize}>Initialize</Button>
 	</div>
 </div>
 {/if}

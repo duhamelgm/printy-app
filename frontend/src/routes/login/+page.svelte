@@ -4,27 +4,37 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import * as Field from '$lib/components/ui/field';
+	import * as InputOTP from '$lib/components/ui/input-otp';
 
 	let inputToken = $state('');
 	let interacted = getContext<Writable<boolean>>('interacted');
+	let loading = $state(false);
 
 	const onLogin = async (e: Event) => {
 		e.preventDefault();
+		loading = true;
 
-		const response = await fetch(`${PUBLIC_API_URL}/v1/auth/verify`, {
-			method: 'POST',
-			headers: {
-				Authorization: inputToken
+		try {
+			const response = await fetch(`${PUBLIC_API_URL}/v1/auth/verify`, {
+				method: 'POST',
+				headers: {
+					Authorization: inputToken
+				}
+			});
+
+			const data = await response.json();
+			if (data.status === 'ok') {
+				localStorage.setItem('authToken', inputToken);
+				interacted.set(true);
+				goto('/');
+			} else {
+				alert('Invalid token');
 			}
-		});
-
-		const data = await response.json();
-		if (data.status === 'ok') {
-			localStorage.setItem('authToken', inputToken);
-			interacted.set(true);
-			goto('/');
-		} else {
-			alert('Invalid token');
+		} catch (error) {
+			console.error(error);
+		} finally {
+			loading = false;
 		}
 	};
 </script>
@@ -35,7 +45,7 @@
 	<div class="retro-grid bg-synth-grid opacity-30 pointer-events-none"></div>
 	<!-- Top Gradient Glow -->
 	<div
-		class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-secondary/10 to-transparent pointer-events-none"
+		class="absolute top-0 left-0 w-full h-64 bg-linear-to-b from-secondary/10 to-transparent pointer-events-none"
 	></div>
 	<!-- Main Content Wrapper -->
 	<div class="relative z-10 flex flex-1 flex-col mt-20 px-6 py-12 lg:px-8">
@@ -60,31 +70,29 @@
 		<div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
 			<form action="#" class="space-y-6" method="POST" onsubmit={onLogin}>
 				<!-- Password Field -->
-				<div>
-					<div class="flex items-center justify-between ml-1 mb-2">
-						<label class="block text-sm font-medium leading-6 text-white/80" for="password">
-							Auth Token
-						</label>
+				<Field.Field>
+					<div class="flex flex-col items-center gap-4">
+						<Field.Label for="token" class="text-left w-full px-6">Auth Token</Field.Label>
+
+						<InputOTP.Root maxlength={6} bind:value={inputToken}>
+							{#snippet children({ cells })}
+								<InputOTP.Group>
+									{#each cells.slice(0, 3) as cell (cell)}
+										<InputOTP.Slot {cell} />
+									{/each}
+								</InputOTP.Group>
+								<InputOTP.Separator />
+								<InputOTP.Group>
+									{#each cells.slice(3, 6) as cell (cell)}
+										<InputOTP.Slot {cell} />
+									{/each}
+								</InputOTP.Group>
+							{/snippet}
+						</InputOTP.Root>
 					</div>
-					<div
-						class="relative mt-2 rounded-xl bg-surface-dark/80 backdrop-blur-sm neon-border-glow border border-[#315f68] transition-all duration-300"
-					>
-						<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-							<span class="material-symbols-outlined text-[#90c1cb]">lock</span>
-						</div>
-						<input
-							autocomplete="current-password"
-							class="block w-full rounded-xl border-0 bg-transparent py-4 pl-12 pr-12 text-white placeholder:text-[#90c1cb]/50 focus:ring-0 sm:text-base sm:leading-6"
-							id="password"
-							name="password"
-							placeholder="Enter your auth token"
-							required={true}
-              bind:value={inputToken}
-							type="password"
-						/>
-					</div>
-				</div>
-        <Button class="w-full" size="xl" type="submit">Login</Button>
+				</Field.Field>
+
+				<Button disabled={loading} loading={loading} class="w-full mt-8" size="xl" type="submit">Login</Button>
 			</form>
 		</div>
 	</div>

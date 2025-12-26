@@ -2,6 +2,7 @@
 	import { cn, type WithElementRef } from '$lib/utils.js';
 	import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
 	import { type VariantProps, tv } from 'tailwind-variants';
+	import { Spinner } from "$lib/components/ui/spinner/index.js";
 
 	export const buttonVariants = tv({
 		base: "font-bold tracking-widest uppercase z-10 text-white group relative flex cursor-pointer items-center justify-center overflow-hidden transition-all hover:scale-105 active:scale-95 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-md whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -42,6 +43,7 @@
 		} & {
 			startIcon?: string;
 			endIcon?: string;
+			loading?: boolean;
 		};
 </script>
 
@@ -57,6 +59,7 @@
 		children,
 		startIcon,
 		endIcon,
+		loading,
 		...restProps
 	}: ButtonProps = $props();
 </script>
@@ -75,6 +78,9 @@
 		<div
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
+		{#if loading}
+			<Spinner />
+		{/if}
 		{#if startIcon}
 			<span class="material-symbols-outlined text-inherit text-[28px] animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}
@@ -99,6 +105,9 @@
 		<div
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
+		{#if loading}
+			<Spinner />
+		{/if}
 		{#if startIcon}
 			<span class="material-symbols-outlined text-inherit animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}

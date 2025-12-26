@@ -36,11 +36,13 @@ def create_app() -> Flask:
             return jsonify({"status": "error", "message": "Invalid password"}), 401
 
         # Create a new token
-        token = Token(value=f"{random.randint(100, 999)}-{random.randint(100, 999)}", expires_at=datetime.now() + timedelta(days=body.duration_days))
+        token_first_part = random.randint(100, 999)
+        token_second_part = random.randint(100, 999)
+        token = Token(value=f"{token_first_part}{token_second_part}", expires_at=datetime.now() + timedelta(days=body.duration_days))
         db.session.add(token)
         db.session.commit()
 
-        print_id = PrintImage(template_name="token", attributes={ "token": token.value }).call()
+        print_id = PrintImage(template_name="token", attributes={ "token": f"{token_first_part}-{token_second_part}" }).call()
         return jsonify({"status": "ok", "payload": { "token": token.value }})
 
     @app.post("/v1/auth/verify")

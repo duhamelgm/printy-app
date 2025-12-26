@@ -5,19 +5,19 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	let inputRef = $state<HTMLInputElement | null>(null);
-  let inputRefCamera = $state<HTMLInputElement | null>(null);
+	let inputRefCamera = $state<HTMLInputElement | null>(null);
 
 	let imageFile = $state<File | null>(null);
 	let imagePreview = $state<string | null>(null);
-  let loading = $state(false);
+	let loading = $state(false);
 
 	const onUpload = () => {
 		inputRef?.click();
 	};
 
-  const onUploadCamera = () => {
-    inputRefCamera?.click();
-  };
+	const onUploadCamera = () => {
+		inputRefCamera?.click();
+	};
 
 	const handleFileChange = (e: Event) => {
 		const file = (e.target as HTMLInputElement).files?.[0];
@@ -28,28 +28,28 @@
 		}
 	};
 
-  const handleSubmit = async () => {
-    loading = true;
+	const handleSubmit = async () => {
+		loading = true;
 
-    if (!imageFile) {
-      return;
-    }
+		if (!imageFile) {
+			return;
+		}
 
-    try {
-      const formData = new FormData();
-      formData.append('image', imageFile);
+		try {
+			const formData = new FormData();
+			formData.append('image', imageFile);
 
-      const data = await authorizedPost('/v1/print/photo', formData, 'form-data');
+			const data = await authorizedPost('/v1/print/photo', formData, 'form-data');
 
-      if (data.status === 'ok') {
-        goto(`/print/success`);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      loading = false;
-    }
-  };
+			if (data.status === 'ok') {
+				goto(`/print/success`);
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			loading = false;
+		}
+	};
 </script>
 
 <div
@@ -89,7 +89,9 @@
 		<!-- Photo Drop Zone / Preview -->
 		<div class="flex flex-col md:flex-row justify-center mt-4 mb-6 gap-4">
 			<Button size="lg" endIcon="photo_library" onclick={onUpload}>Upload from Gallery</Button>
-      <Button size="lg" endIcon="camera" onclick={onUploadCamera} variant="outline">Take a Picture</Button>
+			<Button size="lg" endIcon="camera" onclick={onUploadCamera} variant="outline">
+				Take a Picture
+			</Button>
 		</div>
 
 		<button
@@ -122,7 +124,15 @@
 			{/if}
 		</button>
 		<div class="flex justify-center">
-			<Button size="lg" endIcon="center_focus_strong" onclick={handleSubmit}>Print the Capture</Button>
+			<Button
+				size="lg"
+				endIcon="center_focus_strong"
+				disabled={loading}
+				{loading}
+				onclick={handleSubmit}
+			>
+				Print the Capture
+			</Button>
 		</div>
 	</main>
 </div>
