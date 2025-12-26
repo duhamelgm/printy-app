@@ -2,6 +2,7 @@ from .image_raster_html import ImageRasterHTML
 from .image_raster import ImageRaster
 from models import Print
 from database import db
+from PIL import Image
 import os
 
 class PrintImage:
