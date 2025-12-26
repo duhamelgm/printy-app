@@ -5,6 +5,8 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	let inputRef = $state<HTMLInputElement | null>(null);
+  let inputRefCamera = $state<HTMLInputElement | null>(null);
+
 	let imageFile = $state<File | null>(null);
 	let imagePreview = $state<string | null>(null);
   let loading = $state(false);
@@ -12,6 +14,10 @@
 	const onUpload = () => {
 		inputRef?.click();
 	};
+
+  const onUploadCamera = () => {
+    inputRefCamera?.click();
+  };
 
 	const handleFileChange = (e: Event) => {
 		const file = (e.target as HTMLInputElement).files?.[0];
@@ -51,7 +57,7 @@
 >
 	<Topbar backHref="/print" />
 	<!-- Main Scroll Content -->
-	<main class="flex-1 overflow-y-auto px-4 pb-32">
+	<main class="flex-1 overflow-y-auto px-4 pb-32 flex flex-col items-center justify-center">
 		<!-- Headline -->
 		<div class="flex flex-col items-center pt-6 pb-6">
 			<h1
@@ -64,23 +70,31 @@
 			</p>
 		</div>
 		<!-- Photo Drop Zone / Preview -->
-		<div class="flex justify-center mt-4 mb-6">
+		<div class="flex flex-col md:flex-row justify-center mt-4 mb-6 gap-4">
 			<Button size="lg" endIcon="photo_library" onclick={onUpload}>Upload from Gallery</Button>
+      <Button size="lg" endIcon="camera" onclick={onUploadCamera} variant="outline">Take a Picture</Button>
 		</div>
 
 		<button
-			class="w-full aspect-[4/5] max-h-[400px] relative group rounded-2xl overflow-hidden border-2 border-dashed border-primary/40 bg-black/20 hover:border-primary hover:shadow-neon transition-all duration-300 flex flex-col items-center justify-center cursor-pointer mb-6"
-			onclick={onUpload}
+			class="w-full aspect-4/5 max-h-[400px] max-w-[400px] relative group rounded-2xl overflow-hidden border-2 border-dashed border-primary/40 bg-black/20 hover:border-primary hover:shadow-neon transition-all duration-300 flex flex-col items-center justify-center cursor-pointer mb-6"
+			onclick={onUploadCamera}
 		>
 			<!-- Placeholder State -->
 			<input
 				type="file"
-        capture
 				accept="image/*"
 				style="display: none;"
 				bind:this={inputRef}
 				onchange={handleFileChange}
 			/>
+      <input
+        type="file"
+        capture
+        accept="image/*"
+        style="display: none;"
+        bind:this={inputRefCamera}
+        onchange={handleFileChange}
+      />
 
 			<!-- Preview -->
 			{#if imagePreview}

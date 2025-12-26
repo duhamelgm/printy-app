@@ -11,7 +11,7 @@
 				destructive:
 					'bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white shadow-xs',
 				outline:
-					'bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border shadow-xs',
+					'bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border shadow-xs hover:text-black',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-xs',
 				ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
 				link: 'text-primary underline-offset-4 hover:underline'
@@ -76,13 +76,13 @@
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
 		{#if startIcon}
-			<span class="material-symbols-outlined text-white text-[28px] animate-pulse {children ? 'mr-3' : ''}">
+			<span class="material-symbols-outlined text-inherit text-[28px] animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}
 			</span>
 		{/if}
 		{@render children?.()}
 		{#if endIcon}
-		<span class="material-symbols-outlined text-white animate-pulse {children ? 'ml-3' : ''}">
+		<span class="material-symbols-outlined text-inherit animate-pulse {children ? 'ml-3' : ''}">
 			{endIcon}
 		</span>
 		{/if}
@@ -100,13 +100,13 @@
 			class="absolute inset-0 translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite] transition-transform"
 		></div>
 		{#if startIcon}
-			<span class="material-symbols-outlined text-white animate-pulse {children ? 'mr-3' : ''}">
+			<span class="material-symbols-outlined text-inherit animate-pulse {children ? 'mr-3' : ''}">
 				{startIcon}
 			</span>
 		{/if}
 		{@render children?.()}
 		{#if endIcon}
-			<span class="material-symbols-outlined text-white animate-pulse {children ? 'ml-3' : ''}">
+			<span class="material-symbols-outlined text-inherit animate-pulse {children ? 'ml-3' : ''}">
 				{endIcon}
 			</span>
 		{/if}

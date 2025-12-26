@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Topbar from '$lib/components/shared/Topbar.svelte';
 	import { Button } from '$lib/components/ui/button';
 </script>
 
@@ -8,28 +9,12 @@
 	}
 </style>
 
-<div class="relative flex h-screen w-full flex-col justify-between overflow-hidden bg-background-dark">
-	<div class="absolute inset-0 pointer-events-none z-0">
-		<div class="absolute inset-0 bg-synth-grid bg-[size:40px_40px] opacity-[0.15]"></div>
-		<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] opacity-40"></div>
-		<div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-background-dark via-background-dark/90 to-transparent"></div>
-	</div>
+<div class="relative flex h-full w-full flex-col justify-between overflow-hidden bg-background-dark">
+	<Topbar backHref="/print" />
 
-	<div class="relative z-10 w-full px-6 pt-12 pb-4 flex justify-between items-center">
-		<Button
-			href="/"
-			variant="ghost"
-			size="icon"
-			startIcon="close"
-			class="rounded-full bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white/70"
-		/>
-		<div class="text-sm font-bold tracking-widest uppercase text-primary/60">Printy App</div>
-		<div class="w-10"></div>
-	</div>
-
-	<div class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 w-full max-w-md mx-auto">
+	<div class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 w-full max-w-md mx-auto mt-36">
 		<div class="relative mb-8 group">
-			<div class="absolute -inset-4 bg-gradient-to-tr from-primary to-neon-purple rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-1000 animate-pulse"></div>
+			<div class="absolute -inset-4 bg-linear-to-tr from-primary to-neon-purple rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-1000 animate-pulse"></div>
 			<div class="relative flex items-center justify-center w-32 h-32 rounded-full bg-background-dark border-2 border-primary shadow-[0_0_30px_rgba(13,204,242,0.3)]">
 				<span class="material-symbols-outlined text-6xl text-primary drop-shadow-[0_0_10px_rgba(13,204,242,0.8)]">
 					check_circle
@@ -47,12 +32,12 @@
 		</div>
 	</div>
 
-	<div class="relative z-10 w-full px-6 pb-10 pt-4 flex flex-col gap-3 max-w-md mx-auto">
+	<div class="relative z-10 w-full px-6 pb-10 pt-4 flex flex-col gap-3 max-w-md mx-auto mt-8">
 		<Button
-			href="/"
+			href="/print"
 			variant="outline"
 			size="xl"
-			class="w-full rounded-xl bg-[#1a2f33]/50 border-white/10 hover:bg-[#1a2f33]"
+			class="w-full rounded-xl bg-[#1a2f33]/50 border-white/10 hover:bg-[#1a2f33] hover:text-white"
 		>
 			Done
 		</Button>

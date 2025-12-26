@@ -5,7 +5,7 @@ from flask_alembic import Alembic
 from redis import Redis
 from database import db
 from models import *
-from services import PrintImage
+from services import PrintImage, CookieMissfortune, CreepyImageGeneration
 from printing_queue import enqueue_print
 from pydantic import BaseModel
 from flask_pydantic import validate
@@ -72,6 +72,11 @@ def create_app() -> Flask:
         img = Image.open(io.BytesIO(image_bytes))
         print_id = PrintImage(image=img).call()
         return jsonify({"status": "ok", "payload": { "print_id": print_id }})
+
+    @app.get("/v1/print/cookie")
+    def get_cookie_missfortune():
+        cookie = CookieMissfortune().call()
+        return jsonify({"status": "ok", "payload": { "cookie": cookie }})
 
     return app
 

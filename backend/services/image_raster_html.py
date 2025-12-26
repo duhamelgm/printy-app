@@ -18,7 +18,7 @@ class ImageRasterHTML:
 
     def save_image_from_html(self) -> None:
         hti = Html2Image(
-          size=(576, 1000), 
+          size=(576, 2000), 
           custom_flags=[
             "--no-sandbox",         
             "--disable-gpu",
