@@ -4,9 +4,11 @@ from models import Print
 from database import db
 from PIL import Image
 import os
+from typing import Optional
+from printing_queue import enqueue_print
 
 class PrintImage:
-  def __init__(self, template_name: str | None, image: Image | None, attributes: dict = {}):
+  def __init__(self, template_name: str | None = None, image: Optional[Image] = None, attributes: dict = {}):
     self.template_name = template_name
     self.attributes = attributes
     self.image = image
