@@ -2,11 +2,10 @@ from .image_raster_html import ImageRasterHTML
 from .image_raster import ImageRaster
 from models import Print
 from database import db
-from printing_queue import enqueue_print
 import os
 
 class PrintImage:
-  def __init__(self, template_name: Optional[str] = None, attributes: dict = {}, image: Optional[Image] = None):
+  def __init__(self, template_name: str | None, image: Image | None, attributes: dict = {}):
     self.template_name = template_name
     self.attributes = attributes
     self.image = image
