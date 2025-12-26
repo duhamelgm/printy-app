@@ -75,6 +75,7 @@
 			<!-- Placeholder State -->
 			<input
 				type="file"
+        capture
 				accept="image/*"
 				style="display: none;"
 				bind:this={inputRef}
