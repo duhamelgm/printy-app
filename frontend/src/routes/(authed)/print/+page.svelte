@@ -78,12 +78,7 @@ onMount(() => {
 						<p class="text-[#90c1cb] text-sm font-normal leading-relaxed mb-4">
 							Upload or take a picture to auto-generate details via OCR.
 						</p>
-						<button
-							class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-transparent border border-primary text-primary text-sm font-bold leading-normal hover:bg-primary/10 transition-colors"
-						>
-							<span class="truncate">Open Camera</span>
-							<span class="material-symbols-outlined ml-2 text-sm">center_focus_strong</span>
-						</button>
+						<Button href="/print/photo" size="lg" endIcon="center_focus_strong">Open Camera</Button>
 					</div>
 				</div>
 			</div>

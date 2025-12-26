@@ -1,3 +1,4 @@
+from .image_raster_html import ImageRasterHTML
 from .image_raster import ImageRaster
 from models import Print
 from database import db
@@ -5,13 +6,17 @@ from printing_queue import enqueue_print
 import os
 
 class PrintImage:
-  def __init__(self, template_name: str, attributes: dict):
+  def __init__(self, template_name: Optional[str] = None, attributes: dict = {}, image: Optional[Image] = None):
     self.template_name = template_name
     self.attributes = attributes
+    self.image = image
 
   def call(self) -> bytes:
     # Create the ticket image
-    image = ImageRaster(template_name=self.template_name, attributes=self.attributes)
+    if self.image:
+      image = ImageRaster(self.image)
+    else:
+      image = ImageRasterHTML(template_name=self.template_name, attributes=self.attributes)
 
     # Save the print to the database
     print = Print(raster_data=image.to_raster_format(), image_width=image.get_width(), image_height=image.get_height())
