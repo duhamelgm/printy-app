@@ -8,7 +8,6 @@ from liquid import render
 import random
 
 PRINTER_WIDTH = 576
-PRINTER_HEIGHT = 700
 
 class ImageRaster:
     def __init__(self, image: Image):
@@ -27,10 +26,8 @@ class ImageRaster:
 
         if height_if_rotated > height_no_rotation:
             img = img.rotate(90, expand=True)
-            img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
-        else:
-            img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
-
+        
+        img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
         img = img.convert("L")  # convert to grayscale
         img = img.convert("1", dither=Image.FLOYDSTEINBERG)
         img = ImageOps.invert(img)
