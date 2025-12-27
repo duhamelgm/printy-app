@@ -25,7 +25,7 @@ class ImageRaster:
         height_if_rotated = img.width * PRINTER_WIDTH / img.height
 
         if height_if_rotated > height_no_rotation:
-            img = img.rotate(90, expand=True)
+            img = img.rotate(270, expand=True)
         
         img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
         img = img.convert("L")  # convert to grayscale
