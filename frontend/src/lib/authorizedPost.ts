@@ -1,7 +1,7 @@
 import { goto } from "$app/navigation";
 import { PUBLIC_API_URL } from "$env/static/public";
 
-const authorizedPost = async (path: string, body: any, contentType: 'json' | 'form-data' = 'json') => {
+const authorizedPost = async (path: string, body?: any, contentType: 'json' | 'form-data' = 'json') => {
   const response = await fetch(`${PUBLIC_API_URL}${path}`, {
     method: 'POST',
     body: contentType === 'json' ? JSON.stringify(body) : body,

@@ -5,7 +5,7 @@ from flask_alembic import Alembic
 from redis import Redis
 from database import db
 from models import *
-from services import PrintImage, CookieMissfortune, CreepyImageGeneration
+from services import PrintImage, GetCreepyImageUrl, GetFortuneText
 from printing_queue import enqueue_print
 from pydantic import BaseModel
 from flask_pydantic import validate
@@ -75,10 +75,13 @@ def create_app() -> Flask:
         print_id = PrintImage(image=img).call()
         return jsonify({"status": "ok", "payload": { "print_id": print_id }})
 
-    @app.get("/v1/print/cookie")
-    def get_cookie_missfortune():
-        cookie = CookieMissfortune().call()
-        return jsonify({"status": "ok", "payload": { "cookie": cookie }})
+    @app.post("/v1/print/fortune")
+    @authorized()
+    def create_cookie_print():
+        image = GetCreepyImageUrl().call()
+        fortune = GetFortuneText().call()
+        print_id = PrintImage(template_name="fortune", attributes={ "image": image, "text": fortune }).call()
+        return jsonify({"status": "ok", "payload": { "print_id": print_id }})
 
     return app
 

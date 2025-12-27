@@ -1,6 +1,6 @@
 from .print_image import PrintImage
-from .cookie_missfortune import CookieMissfortune
-from .creepy_image_generation import CreepyImageGeneration
+from .get_creepy_image_url import GetCreepyImageUrl
+from .get_fortune_text import GetFortuneText
 
-__all__ = ["PrintImage", "CookieMissfortune", "CreepyImageGeneration"]
+__all__ = ["PrintImage", "GetCreepyImageUrl", "GetFortuneText"]
 

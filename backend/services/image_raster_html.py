@@ -47,11 +47,9 @@ class ImageRasterHTML:
         bbox = mask.getbbox()
         img = img.crop(bbox)
 
-        img = img.convert("L")  # convert to grayscale
-        threshold = 254  # Lower value -> more pixels go to black
-        img.point(lambda x: 255 if x > threshold else 0, mode="1")
+        img = img.convert("L")
+        img = img.convert("1", dither=Image.FLOYDSTEINBERG)
         img = ImageOps.invert(img)
-        img = img.convert("1")
 
         img.save(self.tmp_image_path)
 
