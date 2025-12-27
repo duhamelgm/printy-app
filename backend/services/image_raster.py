@@ -20,7 +20,17 @@ class ImageRaster:
         # open the PNG again, and crop it to the content.
         img = self.image
         img = img.convert("RGB")
-        img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
+
+        # Choose orientation that yields the largest printable area (height is unbounded, width is capped at PRINTER_WIDTH).
+        height_no_rotation = img.height * PRINTER_WIDTH / img.width
+        height_if_rotated = img.width * PRINTER_WIDTH / img.height
+
+        if height_if_rotated > height_no_rotation:
+            img = img.rotate(90, expand=True)
+            img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
+        else:
+            img = img.resize((PRINTER_WIDTH, int(img.height * PRINTER_WIDTH / img.width)))
+
         img = img.convert("L")  # convert to grayscale
         img = img.convert("1", dither=Image.FLOYDSTEINBERG)
         img = ImageOps.invert(img)
