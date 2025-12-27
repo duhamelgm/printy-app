@@ -25,15 +25,15 @@
 		console.log(payload);
 
 		try {
-			const response = await authorizedPost('/v1/print/ticket', payload);
-			console.log(response);
+			const data = await authorizedPost('/v1/print/ticket', payload);
+			if (data.status === 'ok') {
+				goto('/print/success');
+			}
 		} catch (error) {
 			console.error(error);
 		} finally {
 			loading = false;
 		}
-
-		goto('/print/success');
 	};
 </script>
 

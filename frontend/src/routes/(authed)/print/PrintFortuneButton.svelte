@@ -8,8 +8,10 @@
   const handlePrintFortune = async () => {
     loading = true;
     try {
-      await authorizedPost('/v1/print/fortune');
-      goto('/print/success');
+      const data = await authorizedPost('/v1/print/fortune');
+      if (data.status === 'ok') {
+				goto('/print/success');
+			}
     } catch (error) {
       console.error(error);
     } finally {
