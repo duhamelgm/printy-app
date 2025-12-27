@@ -10,3 +10,6 @@ else:
 
 def enqueue_print(print_id: int) -> None:
   redis_client.lpush("printing_queue", print_id)
+
+def queue_size() -> int:
+  return redis_client.llen("printing_queue")

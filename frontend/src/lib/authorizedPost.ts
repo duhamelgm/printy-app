@@ -17,6 +17,8 @@ const authorizedPost = async (path: string, body?: any, contentType: 'json' | 'f
   }
 
   if (data.status === 'error') {
+    alert(data.message);
+
     if (data.message === 'Unauthorized') {
       goto('/login');
       localStorage.removeItem('authToken');

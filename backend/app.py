@@ -13,6 +13,7 @@ from flask_cors import CORS
 import random
 from datetime import datetime, timedelta
 from auth import authorized
+from throttle import throttle
 from PIL import Image
 import io
 
@@ -58,14 +59,15 @@ def create_app() -> Flask:
 
     @app.post("/v1/print/ticket")
     @authorized()
+    @throttle()
     @validate()
     def create_ticket_print(body: TicketPrintRequestBody):        
         print_id = PrintImage(template_name="ticket", attributes=body.model_dump()).call()
         return jsonify({"status": "ok", "payload": { "print_id": print_id }})
 
-
     @app.post("/v1/print/photo")
     @authorized()
+    @throttle()
     def create_photo_print():
         if "image" not in request.files:
             return jsonify({"status": "error", "message": "Image missing"}), 400
@@ -77,6 +79,7 @@ def create_app() -> Flask:
 
     @app.post("/v1/print/fortune")
     @authorized()
+    @throttle()
     def create_cookie_print():
         image = GetCreepyImageUrl().call()
         fortune = GetFortuneText().call()
