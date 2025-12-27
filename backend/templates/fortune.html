@@ -92,6 +92,7 @@
   <style>
     body {
       min-height: max(884px, 100dvh);
+      width: 576px;
     }
   </style>
 </head>
@@ -99,7 +100,7 @@
 <body class="bg-black p-0 m-0">
 
   <main>
-    <div class="w-full max-w-sm relative perspective-1000">
+    <div class="w-full relative perspective-1000">
       <div class="absolute -inset-1  animate-pulse"></div>
       <div
         class="relative bg-white text-black shadow-2xl overflow-hidden ticket-jagged-bottom transform hover:scale-[1.01] transition-transform duration-300 ease-out">
@@ -110,11 +111,12 @@
           <div class="w-full aspect-[1/1] overflow-hidden border-2 border-black rounded-sm relative group">
             <img alt="A failed fortune"
               class="w-full h-full object-cover block"
+              style="filter: brightness(1.5);"
               src="{{ image }}" />
             <div class="absolute inset-0 bg-white mix-blend-multiply pointer-events-none"></div>
           </div>
           <div class="text-center space-y-2 py-4 border-t border-b border-black w-full">
-            <p class="leading-relaxed tracking-tight">
+            <p class="text-xl leading-relaxed tracking-tight">
               {{ text }}
             </p>
           </div>
