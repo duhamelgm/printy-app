@@ -14,6 +14,7 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - ADMIN_PASSWORD=admin
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NOTION_TOKEN=${NOTION_TOKEN}
     depends_on:
       - db
       - redis

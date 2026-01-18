@@ -5,7 +5,7 @@ from flask_alembic import Alembic
 from redis import Redis
 from database import db
 from models import *
-from services import PrintImage, GetCreepyImageUrl, GetFortuneText
+from services import PrintImage, GetCreepyImageUrl, GetFortuneText, GetDayTickets
 from printing_queue import enqueue_print
 from pydantic import BaseModel
 from flask_pydantic import validate
@@ -16,6 +16,7 @@ from auth import authorized
 from throttle import throttle
 from PIL import Image
 import io
+import time
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -85,6 +86,23 @@ def create_app() -> Flask:
         fortune = GetFortuneText().call()
         print_id = PrintImage(template_name="fortune", attributes={ "image": image, "text": fortune }).call()
         return jsonify({"status": "ok", "payload": { "print_id": print_id }})
+
+    class PrintDayTicketsRequestBody(BaseModel):
+        password: str
+
+    @app.post("/v1/print/day-tickets")
+    @validate()
+    def print_day_tickets(body: PrintDayTicketsRequestBody):
+        # Check if the password is correct
+        if body.password != os.getenv("ADMIN_PASSWORD"):
+            return jsonify({"status": "error", "message": "Invalid password"}), 401
+        
+        tickets = GetDayTickets().call()
+        for ticket in tickets:
+            PrintImage(template_name="ticket", attributes=ticket).call()
+            time.sleep(1)
+
+        return jsonify({"status": "ok" })
 
     return app
 
