@@ -13,7 +13,8 @@ class GetDayTickets:
     )
 
     output_tickets = []
-    results = random.shuffle(tickets["results"])
+    results = tickets["results"]
+    random.shuffle(results)
 
     for ticket in results:
       type_name = self.safe_dig(ticket, "properties", "Type", "select", "name")
