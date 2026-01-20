@@ -13,8 +13,9 @@ class GetDayTickets:
     )
 
     output_tickets = []
+    results = random.shuffle(tickets["results"])
 
-    for ticket in tickets["results"]:
+    for ticket in results:
       type_name = self.safe_dig(ticket, "properties", "Type", "select", "name")
       day_name = self.safe_dig(ticket, "properties", "Day", "select", "name")
       week_of_month = self.safe_dig(ticket, "properties", "Week of the month", "select", "name")
@@ -31,12 +32,8 @@ class GetDayTickets:
 
     grouped_tickets = {}
 
-    print(output_tickets)
-
     for ticket in output_tickets:
       grouped_tickets[ticket["type"]] = grouped_tickets.get(ticket["type"], []) + [ticket]
-
-    print(grouped_tickets)
 
     for type, tickets in grouped_tickets.items():
       if len(tickets) == 1:
