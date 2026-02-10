@@ -35,53 +35,55 @@ class TestGetDayTickets(unittest.TestCase):
       }
     }
 
-  def _call_service(self, results, is_today_saturday=False, today=None):
+  def _call_service(self, results, today=None):
     with patch.dict(os.environ, {"NOTION_TOKEN": "test-token"}, clear=False):
       with patch.object(get_day_tickets_module.random, "shuffle"):
-        with patch.object(GetDayTickets, "is_today_saturday", return_value=is_today_saturday):
-          with patch.object(get_day_tickets_module, "Client") as mock_client_cls:
-            mock_client = MagicMock()
-            mock_client_cls.return_value = mock_client
-            mock_client.data_sources.query.return_value = {"results": results}
+        with patch.object(get_day_tickets_module, "Client") as mock_client_cls:
+          mock_client = MagicMock()
+          mock_client_cls.return_value = mock_client
+          mock_client.data_sources.query.return_value = {"results": results}
 
-            if today is None:
+          if today is None:
+            tickets = GetDayTickets().call()
+          else:
+            with patch.object(get_day_tickets_module, "datetime") as mock_datetime:
+              mock_datetime.now.return_value = today
               tickets = GetDayTickets().call()
-            else:
-              with patch.object(get_day_tickets_module, "datetime") as mock_datetime:
-                mock_datetime.now.return_value = today
-                tickets = GetDayTickets().call()
 
-            mock_client.data_sources.query.assert_called_once_with(
-              data_source_id="2ecec1a8-4f5c-8076-89b7-000b295a1032"
-            )
-            return tickets
+          mock_client.data_sources.query.assert_called_once_with(
+            data_source_id="2ecec1a8-4f5c-8076-89b7-000b295a1032"
+          )
+          return tickets
 
-  def test_daily_todos_selected_when_not_saturday(self):
+  def test_daily_todos_selected_on_allowed_day(self):
     # Arrange
+    today_monday = datetime(2026, 6, 8)
     tickets = [self._build_task("Daily", "Monday", f"Daily {i}") for i in range(5)]
 
     # Act
-    selected = self._call_service(tickets, is_today_saturday=False)
+    selected = self._call_service(tickets, today=today_monday)
 
     # Assert
     self.assertEqual(len(selected), 5)
 
-  def test_daily_todos_not_selected_on_saturday(self):
+  def test_daily_todos_not_selected_on_non_allowed_day(self):
     # Arrange
+    today_wednesday = datetime(2026, 6, 10)
     tickets = [self._build_task("Daily", "Monday", f"Daily {i}") for i in range(5)]
 
     # Act
-    selected = self._call_service(tickets, is_today_saturday=True)
+    selected = self._call_service(tickets, today=today_wednesday)
 
     # Assert
     self.assertEqual(selected, [])
 
   def test_daily_todo_assignments_are_balanced(self):
     # Arrange
+    today_monday = datetime(2026, 6, 8)
     tickets = [self._build_task("Daily", "Monday", f"Daily {i}") for i in range(5)]
 
     # Act
-    selected = self._call_service(tickets, is_today_saturday=False)
+    selected = self._call_service(tickets, today=today_monday)
 
     # Assert
     duhamel_count = sum(1 for ticket in selected if ticket["assignee"] == "Duhamel")

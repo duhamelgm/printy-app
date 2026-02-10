@@ -21,7 +21,7 @@ class GetDayTickets:
       day_name = self.safe_dig(ticket, "properties", "Day", "select", "name")
       print(ticket)
 
-      if type_name == "Daily" and not self.is_today_saturday():
+      if type_name == "Daily" and self.should_do_daily():
         output_tickets.append(self.compute_output_tickets(ticket))
 
       if day_name != datetime.now().strftime("%A"):
@@ -92,5 +92,6 @@ class GetDayTickets:
             return default
     return obj
 
-  def is_today_saturday(self):
-    return datetime.now().weekday() == 5
+  # do dailies on Mondays, Tuesdays, Fridays and Sundays
+  def should_do_daily(self):
+    return datetime.now().weekday() in [0, 1, 4, 6]
