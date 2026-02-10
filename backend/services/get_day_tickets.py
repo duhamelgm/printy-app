@@ -16,30 +16,47 @@ class GetDayTickets:
 
     output_tickets = []
     results = tickets["results"]
-    random.shuffle(results)
+    today_name = datetime.now().strftime("%A")
+    tickets_by_type = {
+      "Daily": [],
+      "Weekly": [],
+      "Biweekly": [],
+      "Monthly": [],
+      "Seasonly": [],
+    }
 
-    for index, ticket in enumerate(results):
+    for ticket in results:
       type_name = self.safe_dig(ticket, "properties", "Type", "select", "name")
-      day_name = self.safe_dig(ticket, "properties", "Day", "select", "name")
       print(ticket)
-
-      if type_name == "Daily" and self.should_do_daily():
-        output_tickets.append(self.compute_output_tickets(ticket))
-
-      if day_name != datetime.now().strftime("%A"):
+      day_name = self.safe_dig(ticket, "properties", "Day", "select", "name")
+      if type_name != "Daily" and day_name != today_name:
         continue
-      
-      if type_name == "Weekly":
+
+      if type_name in tickets_by_type:
+        tickets_by_type[type_name].append(ticket)
+
+    if self.should_do_daily():
+      for ticket in tickets_by_type["Daily"]:
         output_tickets.append(self.compute_output_tickets(ticket))
 
-      if type_name == "Biweekly" and self.should_do_biweekly(index):
+    for ticket in tickets_by_type["Weekly"]:
+      output_tickets.append(self.compute_output_tickets(ticket))
+
+    # assuming Notion will always give us tickets in the same order,
+    # we can use the ticket's position in the list to split into odd and even weeks.
+    for index, ticket in enumerate(tickets_by_type["Biweekly"]):
+      if self.should_do_biweekly(index):
         output_tickets.append(self.compute_output_tickets(ticket))
 
-      if type_name == "Monthly" and self.should_do_monthly(index):
+    for index, ticket in enumerate(tickets_by_type["Monthly"]):
+      if self.should_do_monthly(index):
         output_tickets.append(self.compute_output_tickets(ticket))
 
-      if type_name == "Seasonly" and self.should_do_seasonly(index):
+    for index, ticket in enumerate(tickets_by_type["Seasonly"]):
+      if self.should_do_seasonly(index):
         output_tickets.append(self.compute_output_tickets(ticket))
+
+    random.shuffle(output_tickets)
 
     grouped_tickets = {}
 
@@ -93,8 +110,16 @@ class GetDayTickets:
     return self.week_of_month() == index % 4 + 1
 
   def should_do_seasonly(self, index):
-    # Spread seasonly tickets over each month in the season
-    return datetime.now().month % 3 == index % 3
+    # First, spread seasonly tickets over months in a season (mod 3),
+    # then, spread them over weeks in month (mod 4).
+    # e.g. given tasks: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+    # tasks 1, 4, 7, 10, 13 can run in January (1%3 == 1, 4%3 == 1, 7%3 == 1, 10%3 == 1)
+    # of tasks that can run in January: tasks 1 and 13 run in week 1: (1//3)%4 + 1 == 1 and (13//3)%4 + 1 == 1
+    return (
+      datetime.now().month % 3 == index % 3
+      and self.week_of_month() == (index // 3) % 4 + 1
+    )
+    
 
   def safe_dig(self, obj, *path, default=None):
     for key in path:

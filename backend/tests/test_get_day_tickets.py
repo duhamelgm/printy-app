@@ -142,17 +142,19 @@ class TestGetDayTickets(unittest.TestCase):
 
   def test_seasonly_todos_selected_on_correct_month(self):
     # Arrange
-    today_monday_january = datetime(2026, 1, 5)
-    # seasonly: month%3 == index%3
-    # given 5 tasks, for January (1) we should get tasks 1 and 4
+    today_monday_april_week_2 = datetime(2026, 4, 6)
+    # Seasonly tickets are spread over months in a season (mod 3),
+    # then spread over weeks in month (mod 4).
+    # so, only tasks 1 and 4 can run in April (1%3 == 1 and 4%3 == 1),
+    # then only task 4 can run in week 2 ((4//3)%4 + 1 == 2).
     tickets = [self._build_task("Seasonly", "Monday", f"Seasonly {i}") for i in range(5)]
 
     # Act
-    selected = self._call_service(tickets, today=today_monday_january)
+    selected = self._call_service(tickets, today=today_monday_april_week_2)
 
     # Assert
     selected_titles = sorted(ticket["title"] for ticket in selected)
-    self.assertEqual(selected_titles, ["Seasonly 1", "Seasonly 4"])
+    self.assertEqual(selected_titles, ["Seasonly 4"])
     self.assertTrue(all(ticket["type"] == "Seasonly" for ticket in selected))
 
   def test_non_daily_todos_not_selected_on_wrong_day(self):
@@ -185,6 +187,67 @@ class TestGetDayTickets(unittest.TestCase):
     # Assert
     selected_titles = sorted(ticket["title"] for ticket in selected)
     self.assertEqual(selected_titles, ["High Importance", "Low Importance (optional)"])
+
+  def test_monthly_selection_ignores_other_task_types_for_indexing(self):
+    # Arrange
+    today_monday_week_2 = datetime(2026, 6, 8)
+    tickets = [
+      self._build_task("Daily", "Monday", "Daily filler 0"),
+      self._build_task("Weekly", "Monday", "Weekly filler 0"),
+      self._build_task("Monthly", "Monday", "Monthly 0"),
+      self._build_task("Daily", "Monday", "Daily filler 1"),
+      self._build_task("Monthly", "Monday", "Monthly 1"),
+      self._build_task("Biweekly", "Monday", "Biweekly filler 0"),
+      self._build_task("Monthly", "Monday", "Monthly 2"),
+      self._build_task("Seasonly", "Monday", "Seasonly filler 0"),
+      self._build_task("Monthly", "Monday", "Monthly 3"),
+      self._build_task("Weekly", "Monday", "Weekly filler 1"),
+      self._build_task("Monthly", "Monday", "Monthly 4"),
+      self._build_task("Daily", "Monday", "Daily filler 2"),
+      self._build_task("Monthly", "Monday", "Monthly 5"),
+    ]
+
+    # Act
+    selected = self._call_service(tickets, today=today_monday_week_2)
+
+    # Assert
+    selected_monthly_titles = sorted(
+      ticket["title"] for ticket in selected if ticket["type"] == "Monthly"
+    )
+    self.assertEqual(selected_monthly_titles, ["Monthly 1", "Monthly 5"])
+
+  def test_mixed_types_select_expected_tasks(self):
+    # Arrange
+    today_monday_week_2_june = datetime(2026, 6, 8)
+    tickets = [
+      self._build_task("Daily", "Monday", "Daily Selected"),
+      self._build_task("Weekly", "Monday", "Weekly Selected"),
+      self._build_task("Weekly", "Tuesday", "Weekly Not Selected"),
+      self._build_task("Biweekly", "Monday", "Biweekly Selected"),
+      self._build_task("Biweekly", "Monday", "Biweekly Not Selected"),
+      self._build_task("Monthly", "Monday", "Monthly Not Selected"),
+      self._build_task("Monthly", "Monday", "Monthly Selected"),
+      self._build_task("Seasonly", "Monday", "Seasonly Not Selected 0"),
+      self._build_task("Seasonly", "Monday", "Seasonly Not Selected 1"),
+      self._build_task("Seasonly", "Monday", "Seasonly Not Selected 2"),
+      self._build_task("Seasonly", "Monday", "Seasonly Selected"),
+    ]
+
+    # Act
+    selected = self._call_service(tickets, today=today_monday_week_2_june)
+
+    # Assert
+    selected_titles = sorted(ticket["title"] for ticket in selected)
+    self.assertEqual(
+      selected_titles,
+      [
+        "Biweekly Selected",
+        "Daily Selected",
+        "Monthly Selected",
+        "Seasonly Selected",
+        "Weekly Selected",
+      ],
+    )
 
 
 if __name__ == "__main__":
