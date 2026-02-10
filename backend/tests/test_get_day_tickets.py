@@ -25,8 +25,8 @@ GetDayTickets = get_day_tickets_module.GetDayTickets
 
 
 class TestGetDayTickets(unittest.TestCase):
-  def _build_task(self, type_name, day_name, title, week_of_month="1"):
-    return {
+  def _build_task(self, type_name, day_name, title, week_of_month="1", importance=None):
+    task = {
       "properties": {
         "Type": {"select": {"name": type_name}},
         "Day": {"select": {"name": day_name}},
@@ -34,6 +34,9 @@ class TestGetDayTickets(unittest.TestCase):
         "Task name": {"title": [{"plain_text": title}]},
       }
     }
+    if importance is not None:
+      task["properties"]["Importance"] = {"number": importance}
+    return task
 
   def _call_service(self, results, today=None):
     with patch.dict(os.environ, {"NOTION_TOKEN": "test-token"}, clear=False):
@@ -167,6 +170,21 @@ class TestGetDayTickets(unittest.TestCase):
 
     # Assert
     self.assertEqual(selected, [])
+
+  def test_low_importance_tasks_get_optional_suffix(self):
+    # Arrange
+    today_monday = datetime(2026, 6, 8)
+    tickets = [
+      self._build_task("Weekly", "Monday", "Low Importance", importance=4),
+      self._build_task("Weekly", "Monday", "High Importance", importance=20),
+    ]
+
+    # Act
+    selected = self._call_service(tickets, today=today_monday)
+
+    # Assert
+    selected_titles = sorted(ticket["title"] for ticket in selected)
+    self.assertEqual(selected_titles, ["High Importance", "Low Importance (optional)"])
 
 
 if __name__ == "__main__":

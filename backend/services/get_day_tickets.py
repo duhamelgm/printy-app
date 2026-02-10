@@ -3,6 +3,8 @@ import random
 import os
 from datetime import datetime
 
+IMPORTANCE_OPTIONAL_THRESHOLD = 12
+
 class GetDayTickets:
   def __init__(self):
     self.client = Client(auth=os.environ["NOTION_TOKEN"])
@@ -57,9 +59,19 @@ class GetDayTickets:
     return [ticket for tickets in grouped_tickets.values() for ticket in tickets]
 
   def compute_output_tickets(self, ticket: dict) -> dict:
+    task_name = self.safe_dig(ticket, "properties", "Task name", "title", 0, "plain_text", default="Unknown Task")
+    importance = self.safe_dig(ticket, "properties", "Importance", "number")
+
+    if importance is not None:
+      try:
+        if float(importance) < IMPORTANCE_OPTIONAL_THRESHOLD:
+          task_name = f"{task_name} (optional)"
+      except (TypeError, ValueError):
+        pass
+
     return {
-      "title": ticket["properties"]["Task name"]["title"][0]["plain_text"],
-      "description": ticket["properties"]["Task name"]["title"][0]["plain_text"],
+      "title": task_name,
+      "description": task_name,
       "priority": 'Medium',
       "type": ticket["properties"]["Type"]["select"]["name"],
     }
