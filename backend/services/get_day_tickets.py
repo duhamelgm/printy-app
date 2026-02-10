@@ -16,19 +16,27 @@ class GetDayTickets:
     results = tickets["results"]
     random.shuffle(results)
 
-    for ticket in results:
+    for index, ticket in enumerate(results):
       type_name = self.safe_dig(ticket, "properties", "Type", "select", "name")
       day_name = self.safe_dig(ticket, "properties", "Day", "select", "name")
-      week_of_month = self.safe_dig(ticket, "properties", "Week of the month", "select", "name")
       print(ticket)
 
-      if type_name == "Daily":
-        output_tickets.append(self.compute_output_tickets(ticket))
-      
-      if type_name == "Weekly" and day_name == datetime.now().strftime("%A"):
+      if type_name == "Daily" and not self.is_today_saturday():
         output_tickets.append(self.compute_output_tickets(ticket))
 
-      if type_name == "Monthly" and day_name == datetime.now().strftime("%A") and self.week_of_month() == int(week_of_month):
+      if day_name != datetime.now().strftime("%A"):
+        continue
+      
+      if type_name == "Weekly":
+        output_tickets.append(self.compute_output_tickets(ticket))
+
+      if type_name == "Biweekly" and self.should_do_biweekly(index):
+        output_tickets.append(self.compute_output_tickets(ticket))
+
+      if type_name == "Monthly" and self.should_do_monthly(index):
+        output_tickets.append(self.compute_output_tickets(ticket))
+
+      if type_name == "Seasonly" and self.should_do_seasonly(index):
         output_tickets.append(self.compute_output_tickets(ticket))
 
     grouped_tickets = {}
@@ -64,6 +72,18 @@ class GetDayTickets:
 
     return min(week, 3) + 1
 
+  def should_do_biweekly(self, index):
+    # Spread biweekly tickets across odd/even weeks by index
+    return self.week_of_month() % 2 == index % 2
+
+  def should_do_monthly(self, index):
+    # Spread monthly tickets across weeks of month using ticket index modulo.
+    return self.week_of_month() == index % 4 + 1
+
+  def should_do_seasonly(self, index):
+    # Spread seasonly tickets over each month in the season
+    return datetime.now().month % 3 == index % 3
+
   def safe_dig(self, obj, *path, default=None):
     for key in path:
         try:
@@ -71,3 +91,6 @@ class GetDayTickets:
         except (KeyError, IndexError, TypeError):
             return default
     return obj
+
+  def is_today_saturday(self):
+    return datetime.now().weekday() == 5
