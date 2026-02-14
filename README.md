@@ -33,3 +33,11 @@ pip install -r requirements.txt
 FLASK_APP=app.py flask run --port 5000
 ```
 
+## Backend Tests
+Run from repo root:
+
+```bash
+python3 -m unittest backend/tests/test_get_day_tickets.py
+python3 -m unittest discover backend/tests
+```
+
