@@ -92,7 +92,7 @@ class GetDayTickets:
 
   def compute_output_tickets(self, ticket: dict) -> dict:
     task_name = self.safe_dig(ticket, "properties", "Task name", "title", 0, "plain_text", default="Unknown Task")
-    importance = self.safe_dig(ticket, "properties", "Importance", "number")
+    importance = self.safe_dig(ticket, "properties", "Importance", "formula", "number")
 
     if importance is not None:
       try:
