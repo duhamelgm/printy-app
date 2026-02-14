@@ -1,20 +1,35 @@
-from notion_client import Client
 import random
 import os
 from datetime import datetime
+from typing import Protocol
+
 
 IMPORTANCE_OPTIONAL_THRESHOLD = 12
 
-class GetDayTickets:
+
+class TicketSource(Protocol):
+  def fetch_tickets(self) -> list[dict]:
+    ...
+
+
+class NotionTicketSource:
   def __init__(self):
+    from notion_client import Client
     self.client = Client(auth=os.environ["NOTION_TOKEN"])
 
-  def call(self) -> str:
-    tickets = self.client.data_sources.query(
+  def fetch_tickets(self) -> list[dict]:
+    response = self.client.data_sources.query(
       data_source_id="2ecec1a8-4f5c-8076-89b7-000b295a1032"
     )
+    return response["results"]
 
-    results = tickets["results"]
+
+class GetDayTickets:
+  def __init__(self, ticket_source: TicketSource):
+    self.ticket_source = ticket_source
+
+  def call(self) -> list[dict]:
+    results = self.ticket_source.fetch_tickets()
     today_name = datetime.now().strftime("%A")
     tickets_by_type = {
       "Daily": [],
