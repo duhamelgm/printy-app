@@ -1,23 +1,44 @@
-from notion_client import Client
 import random
 import os
 from datetime import datetime
+from typing import Protocol
+
 
 IMPORTANCE_OPTIONAL_THRESHOLD = 12
 
-class GetDayTickets:
+
+class TicketSource(Protocol):
+  def fetch_tickets(self) -> list[dict]:
+    ...
+
+
+class NotionTicketSource:
   def __init__(self):
+    from notion_client import Client
     self.client = Client(auth=os.environ["NOTION_TOKEN"])
 
-  def call(self) -> str:
-    tickets = self.client.data_sources.query(
+  def fetch_tickets(self) -> list[dict]:
+    response = self.client.data_sources.query(
       data_source_id="2ecec1a8-4f5c-8076-89b7-000b295a1032"
     )
+    return response["results"]
 
-    output_tickets = []
-    results = tickets["results"]
+
+class GetDayTickets:
+  def __init__(self, ticket_source: TicketSource):
+    self.ticket_source = ticket_source
+
+  def call(self) -> list[dict]:
+    results = self.ticket_source.fetch_tickets()
     today_name = datetime.now().strftime("%A")
     tickets_by_type = {
+      "Daily": [],
+      "Weekly": [],
+      "Biweekly": [],
+      "Monthly": [],
+      "Seasonly": [],
+    }
+    selected_by_type = {
       "Daily": [],
       "Weekly": [],
       "Biweekly": [],
@@ -37,33 +58,27 @@ class GetDayTickets:
 
     if self.should_do_daily():
       for ticket in tickets_by_type["Daily"]:
-        output_tickets.append(self.compute_output_tickets(ticket))
+        selected_by_type["Daily"].append(self.compute_output_tickets(ticket))
 
     for ticket in tickets_by_type["Weekly"]:
-      output_tickets.append(self.compute_output_tickets(ticket))
+      selected_by_type["Weekly"].append(self.compute_output_tickets(ticket))
 
     # assuming Notion will always give us tickets in the same order,
     # we can use the ticket's position in the list to split into odd and even weeks.
     for index, ticket in enumerate(tickets_by_type["Biweekly"]):
       if self.should_do_biweekly(index):
-        output_tickets.append(self.compute_output_tickets(ticket))
+        selected_by_type["Biweekly"].append(self.compute_output_tickets(ticket))
 
     for index, ticket in enumerate(tickets_by_type["Monthly"]):
       if self.should_do_monthly(index):
-        output_tickets.append(self.compute_output_tickets(ticket))
+        selected_by_type["Monthly"].append(self.compute_output_tickets(ticket))
 
     for index, ticket in enumerate(tickets_by_type["Seasonly"]):
       if self.should_do_seasonly(index):
-        output_tickets.append(self.compute_output_tickets(ticket))
+        selected_by_type["Seasonly"].append(self.compute_output_tickets(ticket))
 
-    random.shuffle(output_tickets)
-
-    grouped_tickets = {}
-
-    for ticket in output_tickets:
-      grouped_tickets[ticket["type"]] = grouped_tickets.get(ticket["type"], []) + [ticket]
-
-    for type, tickets in grouped_tickets.items():
+    for tickets in selected_by_type.values():
+      random.shuffle(tickets)
       if len(tickets) == 1:
         tickets[0]["assignee"] = random.choice(['Duhamel', 'Alika'])
       else:
@@ -73,7 +88,7 @@ class GetDayTickets:
         for i in range(half, len(tickets)):
           tickets[i]["assignee"] = "Alika"
 
-    return [ticket for tickets in grouped_tickets.values() for ticket in tickets]
+    return [ticket for tickets in selected_by_type.values() for ticket in tickets]
 
   def compute_output_tickets(self, ticket: dict) -> dict:
     task_name = self.safe_dig(ticket, "properties", "Task name", "title", 0, "plain_text", default="Unknown Task")

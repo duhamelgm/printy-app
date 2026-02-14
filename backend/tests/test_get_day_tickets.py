@@ -1,20 +1,12 @@
-import os
-import sys
-import types
 import unittest
 import importlib.util
 from pathlib import Path
 from datetime import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 MODULE_PATH = BACKEND_DIR / "services" / "get_day_tickets.py"
-
-if "notion_client" not in sys.modules:
-  notion_client_module = types.ModuleType("notion_client")
-  notion_client_module.Client = MagicMock()
-  sys.modules["notion_client"] = notion_client_module
 
 # Load the module directly to avoid importing services/__init__.py and unrelated deps.
 spec = importlib.util.spec_from_file_location("get_day_tickets_module", MODULE_PATH)
@@ -22,6 +14,14 @@ get_day_tickets_module = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(get_day_tickets_module)
 GetDayTickets = get_day_tickets_module.GetDayTickets
+
+
+class FakeTicketSource:
+  def __init__(self, results):
+    self.results = results
+
+  def fetch_tickets(self) -> list[dict]:
+    return self.results
 
 
 class TestGetDayTickets(unittest.TestCase):
@@ -39,24 +39,16 @@ class TestGetDayTickets(unittest.TestCase):
     return task
 
   def _call_service(self, results, today=None):
-    with patch.dict(os.environ, {"NOTION_TOKEN": "test-token"}, clear=False):
-      with patch.object(get_day_tickets_module.random, "shuffle"):
-        with patch.object(get_day_tickets_module, "Client") as mock_client_cls:
-          mock_client = MagicMock()
-          mock_client_cls.return_value = mock_client
-          mock_client.data_sources.query.return_value = {"results": results}
+    source = FakeTicketSource(results)
+    service = GetDayTickets(source)
 
-          if today is None:
-            tickets = GetDayTickets().call()
-          else:
-            with patch.object(get_day_tickets_module, "datetime") as mock_datetime:
-              mock_datetime.now.return_value = today
-              tickets = GetDayTickets().call()
+    with patch.object(get_day_tickets_module.random, "shuffle"):
+      if today is None:
+        return service.call()
 
-          mock_client.data_sources.query.assert_called_once_with(
-            data_source_id="2ecec1a8-4f5c-8076-89b7-000b295a1032"
-          )
-          return tickets
+      with patch.object(get_day_tickets_module, "datetime") as mock_datetime:
+        mock_datetime.now.return_value = today
+        return service.call()
 
   def test_daily_todos_selected_on_allowed_day(self):
     # Arrange
